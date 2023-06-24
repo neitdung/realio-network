@@ -134,3 +134,45 @@ func (suite *KeeperTestSuite) TestTransferTokenSenderBalanceToSmall() {
 	suite.Require().Error(err)
 	suite.Require().Equal(err.Error(), "1000000000000000000000arst is smaller than 1001000000000000000000arst: insufficient funds")
 }
+
+func (suite *KeeperTestSuite) TestTransferTokenToBlockedAccount() {
+	suite.SetupTest()
+
+	srv := keeper.NewMsgServerImpl(suite.app.AssetKeeper)
+	wctx := sdk.WrapSDKContext(suite.ctx)
+
+	manager := suite.testUser1Address
+	testModuleAcc := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, "mint").GetAddress().String()
+
+	t1 := &types.MsgCreateToken{
+		Manager: manager,
+		Symbol:  "RST", Total: "1000", AuthorizationRequired: true,
+	}
+	_, err := srv.CreateToken(wctx, t1)
+	suite.Require().NoError(err)
+
+	authUserMsg := &types.MsgAuthorizeAddress{
+		Manager: manager,
+		Symbol:  "RST", Address: manager,
+	}
+
+	_, err = srv.AuthorizeAddress(wctx, authUserMsg)
+	suite.Require().NoError(err)
+
+	authUser2Msg := &types.MsgAuthorizeAddress{
+		Manager: manager,
+		Symbol:  "RST", Address: testModuleAcc,
+	}
+
+	_, err = srv.AuthorizeAddress(wctx, authUser2Msg)
+	suite.Require().NoError(err)
+
+	amount := "50000000000000000000"
+	expected := &types.MsgTransferToken{Symbol: "RST", From: manager, To: testModuleAcc, Amount: amount}
+
+	_, err = srv.TransferToken(wctx, expected)
+	suite.Require().Error(err)
+	errExpected := testModuleAcc + " is not allowed to receive funds: unauthorized"
+	suite.Require().Equal(err.Error(), errExpected)
+}
+
