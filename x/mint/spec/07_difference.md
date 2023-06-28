@@ -1,4 +1,4 @@
-# Cosmos SDK Mint module
+# Cosmos SDK mint module
 - There is no maximum supply.
 - The inflation rate for each block is calculated based on the bonded ratio, the goal bonded percentage (67%), and the InflationRateChange parameter (which is set to a default value of 13%). The inflation rate is also bounded by the InflationMax and InflationMin values:
 
@@ -73,7 +73,7 @@
     ```
 ---
 
-# Realio network
+# Realio network mint module
 
 - Maximum supply coins is 7.5e25 RIO:
     ```
