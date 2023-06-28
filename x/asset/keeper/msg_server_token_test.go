@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"strconv"
 	"strings"
-
+	"fmt"
 	"cosmossdk.io/math"
 	realionetworktypes "github.com/realiotech/realio-network/types"
 
@@ -347,4 +347,39 @@ func (suite *KeeperTestSuite) TestTokenMsgServerUnAuthorizeAddressSenderUnauthor
 	_, err = srv.UnAuthorizeAddress(wctx, unAuthUserMsg)
 
 	suite.Require().ErrorIs(err, sdkerrors.ErrUnauthorized)
+}
+
+func (suite *KeeperTestSuite) TestTokenMsgServerCreateThenTransferByBank() {
+	suite.SetupTest()
+
+	srv := keeper.NewMsgServerImpl(suite.app.AssetKeeper)
+	wctx := sdk.WrapSDKContext(suite.ctx)
+	manager := suite.testUser1Address
+	expected := &types.MsgCreateToken{
+		Manager: manager,
+		Symbol:  "RIO", Total: "1000",
+	}
+	_, err := srv.CreateToken(wctx, expected)
+	suite.Require().NoError(err)
+	lowercased := strings.ToLower(expected.Symbol)
+	rio, found := suite.app.AssetKeeper.GetToken(suite.ctx,
+		strings.ToLower(lowercased),
+	)
+	suite.Require().True(found)
+	suite.Require().Equal(expected.Manager, rio.Manager)
+	totalInt, _ := math.NewIntFromString("200")
+
+	canonicalAmount := totalInt.Mul(realionetworktypes.PowerReduction) 
+	coin := sdk.Coins{{Denom: "ario", Amount: canonicalAmount}}
+
+	amount1 := "800000000000000000000"
+	amount2 := "200000000000000000000"
+	err = suite.app.BankKeeper.SendCoins(suite.ctx, suite.testUser1Acc, suite.testUser2Acc, coin)
+	suite.Require().NoError(err)
+	
+	balance := suite.app.BankKeeper.GetBalance(suite.ctx, suite.testUser1Acc, "ario")
+	suite.Require().Equal(balance.String(), fmt.Sprintf("%s%s", amount1, "ario"))
+
+	balance = suite.app.BankKeeper.GetBalance(suite.ctx, suite.testUser2Acc, "ario")
+	suite.Require().Equal(balance.String(), fmt.Sprintf("%s%s", amount2, "ario"))
 }
