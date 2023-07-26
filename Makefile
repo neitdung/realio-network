@@ -295,6 +295,9 @@ proto-check-breaking:
 	@echo "Checking Protobuf files for breaking changes"
 	$(protoImage) buf breaking --against $(HTTPS_GIT)#branch=main
 
+proto-buf-update:
+	@echo "Checking Protobuf files for breaking changes"
+	$(protoImage) buf mod update ./proto
 
 TM_URL              = https://raw.githubusercontent.com/tendermint/tendermint/v0.34.12/proto/tendermint
 GOGO_PROTO_URL      = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
