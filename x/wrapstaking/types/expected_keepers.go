@@ -46,23 +46,11 @@ type ValidatorSet interface {
 	IterateValidators(sdk.Context,
 		func(index int64, validator ValidatorI) (stop bool))
 
-	// iterate through bonded validators by operator address, execute func for each validator
-	IterateBondedValidatorsByPower(sdk.Context,
-		func(index int64, validator ValidatorI) (stop bool))
-
-	// iterate through the consensus validator set of the last block by operator address, execute func for each validator
-	IterateLastValidators(sdk.Context,
-		func(index int64, validator ValidatorI) (stop bool))
-
 	Validator(sdk.Context, sdk.ValAddress) ValidatorI            // get a particular validator by operator address
 	ValidatorByConsAddr(sdk.Context, sdk.ConsAddress) ValidatorI // get a particular validator by consensus address
 	TotalBondedTokens(sdk.Context) math.Int                      // total bonded tokens within the validator set
-	StakingTokenSupply(sdk.Context) math.Int                     // total staking token supply
 
 	// slash the validator and delegators of the validator, specifying offence height, offence power, and slash fraction
-	Slash(sdk.Context, sdk.ConsAddress, int64, int64, sdk.Dec) math.Int
-	Jail(sdk.Context, sdk.ConsAddress)   // jail a validator
-	Unjail(sdk.Context, sdk.ConsAddress) // unjail a validator
 
 	// Delegation allows for getting a particular delegation for a given validator
 	// and delegator outside the scope of the staking module.
