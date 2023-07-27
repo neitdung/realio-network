@@ -7,8 +7,9 @@ import (
 	context "context"
 	fmt "fmt"
 	_ "github.com/cosmos/cosmos-proto"
+	types "github.com/cosmos/cosmos-sdk/codec/types"
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
-	types "github.com/cosmos/cosmos-sdk/types"
+	types1 "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/cosmos/cosmos-sdk/types/msgservice"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
@@ -18,7 +19,6 @@ import (
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	_ "google.golang.org/protobuf/types/known/timestamppb"
-	protobuf "google/protobuf"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -44,8 +44,8 @@ type MsgCreateValidator struct {
 	MinSelfDelegation github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,3,opt,name=min_self_delegation,json=minSelfDelegation,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"min_self_delegation"`
 	DelegatorAddress  string                                 `protobuf:"bytes,4,opt,name=delegator_address,json=delegatorAddress,proto3" json:"delegator_address,omitempty"`
 	ValidatorAddress  string                                 `protobuf:"bytes,5,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
-	Pubkey            *protobuf.Any                          `protobuf:"bytes,6,opt,name=pubkey,proto3" json:"pubkey,omitempty"`
-	Value             types.Coin                             `protobuf:"bytes,7,opt,name=value,proto3" json:"value"`
+	Pubkey            *types.Any                             `protobuf:"bytes,6,opt,name=pubkey,proto3" json:"pubkey,omitempty"`
+	Value             types1.Coin                            `protobuf:"bytes,7,opt,name=value,proto3" json:"value"`
 }
 
 func (m *MsgCreateValidator) Reset()         { *m = MsgCreateValidator{} }
@@ -203,9 +203,9 @@ var xxx_messageInfo_MsgEditValidatorResponse proto.InternalMessageInfo
 // MsgDelegate defines a SDK message for performing a delegation of coins
 // from a delegator to a validator.
 type MsgDelegate struct {
-	DelegatorAddress string     `protobuf:"bytes,1,opt,name=delegator_address,json=delegatorAddress,proto3" json:"delegator_address,omitempty"`
-	ValidatorAddress string     `protobuf:"bytes,2,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
-	Amount           types.Coin `protobuf:"bytes,3,opt,name=amount,proto3" json:"amount"`
+	DelegatorAddress string      `protobuf:"bytes,1,opt,name=delegator_address,json=delegatorAddress,proto3" json:"delegator_address,omitempty"`
+	ValidatorAddress string      `protobuf:"bytes,2,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
+	Amount           types1.Coin `protobuf:"bytes,3,opt,name=amount,proto3" json:"amount"`
 }
 
 func (m *MsgDelegate) Reset()         { *m = MsgDelegate{} }
@@ -255,11 +255,11 @@ func (m *MsgDelegate) GetValidatorAddress() string {
 	return ""
 }
 
-func (m *MsgDelegate) GetAmount() types.Coin {
+func (m *MsgDelegate) GetAmount() types1.Coin {
 	if m != nil {
 		return m.Amount
 	}
-	return types.Coin{}
+	return types1.Coin{}
 }
 
 // MsgDelegateResponse defines the Msg/Delegate response type.
@@ -302,10 +302,10 @@ var xxx_messageInfo_MsgDelegateResponse proto.InternalMessageInfo
 // MsgBeginRedelegate defines a SDK message for performing a redelegation
 // of coins from a delegator and source validator to a destination validator.
 type MsgBeginRedelegate struct {
-	DelegatorAddress    string     `protobuf:"bytes,1,opt,name=delegator_address,json=delegatorAddress,proto3" json:"delegator_address,omitempty"`
-	ValidatorSrcAddress string     `protobuf:"bytes,2,opt,name=validator_src_address,json=validatorSrcAddress,proto3" json:"validator_src_address,omitempty"`
-	ValidatorDstAddress string     `protobuf:"bytes,3,opt,name=validator_dst_address,json=validatorDstAddress,proto3" json:"validator_dst_address,omitempty"`
-	Amount              types.Coin `protobuf:"bytes,4,opt,name=amount,proto3" json:"amount"`
+	DelegatorAddress    string      `protobuf:"bytes,1,opt,name=delegator_address,json=delegatorAddress,proto3" json:"delegator_address,omitempty"`
+	ValidatorSrcAddress string      `protobuf:"bytes,2,opt,name=validator_src_address,json=validatorSrcAddress,proto3" json:"validator_src_address,omitempty"`
+	ValidatorDstAddress string      `protobuf:"bytes,3,opt,name=validator_dst_address,json=validatorDstAddress,proto3" json:"validator_dst_address,omitempty"`
+	Amount              types1.Coin `protobuf:"bytes,4,opt,name=amount,proto3" json:"amount"`
 }
 
 func (m *MsgBeginRedelegate) Reset()         { *m = MsgBeginRedelegate{} }
@@ -362,11 +362,11 @@ func (m *MsgBeginRedelegate) GetValidatorDstAddress() string {
 	return ""
 }
 
-func (m *MsgBeginRedelegate) GetAmount() types.Coin {
+func (m *MsgBeginRedelegate) GetAmount() types1.Coin {
 	if m != nil {
 		return m.Amount
 	}
-	return types.Coin{}
+	return types1.Coin{}
 }
 
 // MsgBeginRedelegateResponse defines the Msg/BeginRedelegate response type.
@@ -417,9 +417,9 @@ func (m *MsgBeginRedelegateResponse) GetCompletionTime() time.Time {
 // MsgUndelegate defines a SDK message for performing an undelegation from a
 // delegate and a validator.
 type MsgUndelegate struct {
-	DelegatorAddress string     `protobuf:"bytes,1,opt,name=delegator_address,json=delegatorAddress,proto3" json:"delegator_address,omitempty"`
-	ValidatorAddress string     `protobuf:"bytes,2,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
-	Amount           types.Coin `protobuf:"bytes,3,opt,name=amount,proto3" json:"amount"`
+	DelegatorAddress string      `protobuf:"bytes,1,opt,name=delegator_address,json=delegatorAddress,proto3" json:"delegator_address,omitempty"`
+	ValidatorAddress string      `protobuf:"bytes,2,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
+	Amount           types1.Coin `protobuf:"bytes,3,opt,name=amount,proto3" json:"amount"`
 }
 
 func (m *MsgUndelegate) Reset()         { *m = MsgUndelegate{} }
@@ -469,11 +469,11 @@ func (m *MsgUndelegate) GetValidatorAddress() string {
 	return ""
 }
 
-func (m *MsgUndelegate) GetAmount() types.Coin {
+func (m *MsgUndelegate) GetAmount() types1.Coin {
 	if m != nil {
 		return m.Amount
 	}
-	return types.Coin{}
+	return types1.Coin{}
 }
 
 // MsgUndelegateResponse defines the Msg/Undelegate response type.
@@ -528,7 +528,7 @@ type MsgCancelUnbondingDelegation struct {
 	DelegatorAddress string `protobuf:"bytes,1,opt,name=delegator_address,json=delegatorAddress,proto3" json:"delegator_address,omitempty"`
 	ValidatorAddress string `protobuf:"bytes,2,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
 	// amount is always less than or equal to unbonding delegation entry balance
-	Amount types.Coin `protobuf:"bytes,3,opt,name=amount,proto3" json:"amount"`
+	Amount types1.Coin `protobuf:"bytes,3,opt,name=amount,proto3" json:"amount"`
 	// creation_height is the height which the unbonding took place.
 	CreationHeight int64 `protobuf:"varint,4,opt,name=creation_height,json=creationHeight,proto3" json:"creation_height,omitempty"`
 }
@@ -580,11 +580,11 @@ func (m *MsgCancelUnbondingDelegation) GetValidatorAddress() string {
 	return ""
 }
 
-func (m *MsgCancelUnbondingDelegation) GetAmount() types.Coin {
+func (m *MsgCancelUnbondingDelegation) GetAmount() types1.Coin {
 	if m != nil {
 		return m.Amount
 	}
-	return types.Coin{}
+	return types1.Coin{}
 }
 
 func (m *MsgCancelUnbondingDelegation) GetCreationHeight() int64 {
@@ -1941,7 +1941,7 @@ func (m *MsgCreateValidator) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Pubkey == nil {
-				m.Pubkey = &protobuf.Any{}
+				m.Pubkey = &types.Any{}
 			}
 			if err := m.Pubkey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

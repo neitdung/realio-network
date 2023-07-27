@@ -8,8 +8,9 @@ import (
 	compress_gzip "compress/gzip"
 	fmt "fmt"
 	_ "github.com/cosmos/cosmos-proto"
+	types1 "github.com/cosmos/cosmos-sdk/codec/types"
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
-	types1 "github.com/cosmos/cosmos-sdk/types"
+	types2 "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
 	proto "github.com/gogo/protobuf/proto"
@@ -18,7 +19,6 @@ import (
 	types "github.com/tendermint/tendermint/proto/tendermint/types"
 	_ "google.golang.org/protobuf/types/known/durationpb"
 	_ "google.golang.org/protobuf/types/known/timestamppb"
-	protobuf "google/protobuf"
 	io "io"
 	io_ioutil "io/ioutil"
 	math "math"
@@ -315,7 +315,7 @@ type Validator struct {
 	// operator_address defines the address of the validator's operator; bech encoded in JSON.
 	OperatorAddress string `protobuf:"bytes,1,opt,name=operator_address,json=operatorAddress,proto3" json:"operator_address,omitempty"`
 	// consensus_pubkey is the consensus public key of the validator, as a Protobuf Any.
-	ConsensusPubkey *protobuf.Any `protobuf:"bytes,2,opt,name=consensus_pubkey,json=consensusPubkey,proto3" json:"consensus_pubkey,omitempty"`
+	ConsensusPubkey *types1.Any `protobuf:"bytes,2,opt,name=consensus_pubkey,json=consensusPubkey,proto3" json:"consensus_pubkey,omitempty"`
 	// jailed defined whether the validator has been jailed from bonded status or not.
 	Jailed bool `protobuf:"varint,3,opt,name=jailed,proto3" json:"jailed,omitempty"`
 	// status is the validator status (bonded/unbonding/unbonded).
@@ -923,7 +923,7 @@ func (m *Params) GetBondDenom() string {
 // balance in addition to shares which is more suitable for client responses.
 type DelegationResponse struct {
 	Delegation Delegation  `protobuf:"bytes,1,opt,name=delegation,proto3" json:"delegation"`
-	Balance    types1.Coin `protobuf:"bytes,2,opt,name=balance,proto3" json:"balance"`
+	Balance    types2.Coin `protobuf:"bytes,2,opt,name=balance,proto3" json:"balance"`
 }
 
 func (m *DelegationResponse) Reset()      { *m = DelegationResponse{} }
@@ -965,11 +965,11 @@ func (m *DelegationResponse) GetDelegation() Delegation {
 	return Delegation{}
 }
 
-func (m *DelegationResponse) GetBalance() types1.Coin {
+func (m *DelegationResponse) GetBalance() types2.Coin {
 	if m != nil {
 		return m.Balance
 	}
-	return types1.Coin{}
+	return types2.Coin{}
 }
 
 // RedelegationEntryResponse is equivalent to a RedelegationEntry except that it
@@ -4129,7 +4129,7 @@ func (m *Validator) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.ConsensusPubkey == nil {
-				m.ConsensusPubkey = &protobuf.Any{}
+				m.ConsensusPubkey = &types1.Any{}
 			}
 			if err := m.ConsensusPubkey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
